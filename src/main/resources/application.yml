@@ -18,3 +18,5 @@ spring:
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
+  jackson:
+    property-naming-strategy: SNAKE_CASE

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sber.deonande.payment.PaymentResultResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,8 +23,21 @@ public class ObligationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ObligationResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<ObligationResponse>> getAll(
+            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) Status status) {
+        return ResponseEntity.ok(service.getAll(category, status));
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<UpcomingResponse> getUpcoming(
+            @RequestParam(defaultValue = "7") int days) {
+        return ResponseEntity.ok(service.getUpcoming(days));
+    }
+
+    @PostMapping("/{id}/pay")
+    public ResponseEntity<PaymentResultResponse> pay(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.pay(id));
     }
 
     @PatchMapping("/{id}/cancel")
