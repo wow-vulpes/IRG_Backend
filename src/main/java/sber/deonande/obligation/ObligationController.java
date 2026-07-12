@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sber.deonande.payment.PaymentResultResponse;
+import sber.deonande.sse.SseService;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +18,12 @@ import java.util.UUID;
 public class ObligationController {
 
     private final ObligationService service;
+    private final SseService sseService;
+
+    @GetMapping("/stream")
+    public SseEmitter stream() {
+        return sseService.subscribe();
+    }
 
     @PostMapping
     public ResponseEntity<ObligationCreateResponse> create(@Valid @RequestBody ObligationCreateRequest request) {

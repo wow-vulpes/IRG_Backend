@@ -9,6 +9,7 @@ import sber.deonande.payment.Payment;
 import sber.deonande.payment.PaymentMapper;
 import sber.deonande.payment.PaymentRepository;
 import sber.deonande.payment.PaymentResultResponse;
+import sber.deonande.sse.SseService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class ObligationService {
     private final ObligationMapper obligationMapper;
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
+    private final SseService sseService;
 
     @Transactional
     public ObligationCreateResponse create(ObligationCreateRequest request) {
@@ -144,6 +146,7 @@ public class ObligationService {
     @Transactional
     public void delete(UUID id) {
         obligationRepository.deleteById(id);
+        sseService.broadcast(Map.of("type", "obligation_deleted", "id", id.toString()));
     }
 
     private void checkAndApplyExpiry(Obligation obligation) {
