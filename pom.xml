@@ -10,10 +10,10 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>sber.deonande</groupId>
-    <artifactId>subscription-registry</artifactId>
+    <artifactId>subtrack</artifactId>
     <version>1.0.0</version>
-    <name>subscription-registry</name>
-    <description>Subscription Registry API</description>
+    <name>subtrack</name>
+    <description>Subtrack API</description>
 
     <properties>
         <java.version>21</java.version>

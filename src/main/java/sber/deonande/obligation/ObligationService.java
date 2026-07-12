@@ -41,11 +41,12 @@ public class ObligationService {
         }
 
         String warning = null;
-        Optional<Obligation> existingActive = obligationRepository.findByTitleIgnoreCaseAndStatus(request.getTitle(), Status.ACTIVE);
+        Optional<Obligation> existingActive = obligationRepository.findByTitleIgnoreCaseAndStatus(request.getTitle(),
+                Status.ACTIVE);
         if (existingActive.isPresent()) {
             Obligation existing = existingActive.get();
             checkAndApplyExpiry(existing);
-            
+
             if (existing.getStatus() == Status.ACTIVE) {
                 warning = "Активное обязательство с таким названием уже существует";
             }
@@ -68,7 +69,8 @@ public class ObligationService {
         LocalDate today = LocalDate.now();
         LocalDate endWindow = today.plusDays(days);
 
-        List<Obligation> obligations = obligationRepository.findByNextPaymentDateBetweenOrderByNextPaymentDateAsc(today, endWindow);
+        List<Obligation> obligations = obligationRepository.findByNextPaymentDateBetweenOrderByNextPaymentDateAsc(today,
+                endWindow);
 
         Map<String, BigDecimal> totals = obligations.stream()
                 .collect(Collectors.groupingBy(Obligation::getCurrency,
@@ -100,7 +102,8 @@ public class ObligationService {
         checkAndApplyExpiry(obligation);
 
         if (obligation.getStatus() != Status.ACTIVE) {
-            throw new BusinessException("Оплатить можно только обязательство со статусом active. Текущий статус: " + obligation.getStatus());
+            throw new BusinessException("Оплатить можно только обязательство со статусом active. Текущий статус: "
+                    + obligation.getStatus().name().toLowerCase());
         }
 
         Payment payment = Payment.builder()
@@ -136,7 +139,8 @@ public class ObligationService {
         checkAndApplyExpiry(obligation);
 
         if (obligation.getStatus() != Status.ACTIVE) {
-            throw new BusinessException("Отменить можно только обязательство со статусом active. Текущий статус: " + obligation.getStatus().name().toLowerCase());
+            throw new BusinessException("Отменить можно только обязательство со статусом active. Текущий статус: "
+                    + obligation.getStatus().name().toLowerCase());
         }
 
         obligation.setStatus(Status.CANCELLED);
@@ -150,13 +154,13 @@ public class ObligationService {
     }
 
     private void checkAndApplyExpiry(Obligation obligation) {
-        if (obligation.getStatus() == Status.ACTIVE && 
-            obligation.getRecurrence() == null && 
-            obligation.getNextPaymentDate() != null && 
-            obligation.getNextPaymentDate().isBefore(LocalDate.now())) {
-            
+        if (obligation.getStatus() == Status.ACTIVE &&
+                obligation.getRecurrence() == null &&
+                obligation.getNextPaymentDate() != null &&
+                obligation.getNextPaymentDate().isBefore(LocalDate.now())) {
+
             obligation.setStatus(Status.EXPIRED);
-            obligationRepository.save(obligation); // Фиксируем истечение срока в БД
+            obligationRepository.save(obligation);
         }
     }
 }
