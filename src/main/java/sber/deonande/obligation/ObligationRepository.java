@@ -18,7 +18,8 @@ public interface ObligationRepository extends JpaRepository<Obligation, UUID> {
     @Query("UPDATE Obligation o SET o.status = 'EXPIRED' WHERE o.status = 'ACTIVE' AND o.recurrence IS NULL AND o.nextPaymentDate < :today")
     void applyLazyExpiry(LocalDate today);
 
-    List<Obligation> findByNextPaymentDateBetweenOrderByNextPaymentDateAsc(LocalDate start, LocalDate end);
+    @Query("SELECT o FROM Obligation o WHERE o.status = 'ACTIVE' AND o.nextPaymentDate BETWEEN :start AND :end ORDER BY o.nextPaymentDate ASC")
+    List<Obligation> findActiveUpcoming(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
     @Query("SELECT o FROM Obligation o WHERE " +
            "(:category IS NULL OR o.category = :category) AND " +

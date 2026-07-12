@@ -2,15 +2,18 @@ package sber.deonande.payment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import sber.deonande.obligation.Obligation;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 @Entity
 @Table(name = "payments")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,7 +35,7 @@ public class Payment {
     @Column(nullable = false, length = 3)
     private String currency;
 
-    @CreationTimestamp
+    @CreatedDate
     @Column(name = "paid_at", nullable = false, updatable = false)
     private LocalDateTime paidAt;
 }

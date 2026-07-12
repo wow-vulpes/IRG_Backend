@@ -194,7 +194,7 @@ class ObligationServiceTest {
         when(obligationRepository.findByTitleIgnoreCaseAndStatus("Netflix", Status.ACTIVE))
                 .thenReturn(Optional.of(existing));
 
-        when(obligationRepository.save(any())).thenReturn(entity);
+        when(obligationRepository.saveAndFlush(any())).thenReturn(entity);
         when(obligationMapper.toResponse(any())).thenReturn(new ObligationResponse());
 
         ObligationCreateResponse response = obligationService.create(request);

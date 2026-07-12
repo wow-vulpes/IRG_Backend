@@ -1,7 +1,6 @@
 package sber.deonande.obligation;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sber.deonande.common.BusinessException;
@@ -13,7 +12,6 @@ import sber.deonande.sse.SseService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,7 +50,7 @@ public class ObligationService {
             }
         }
 
-        Obligation saved = obligationRepository.save(entity);
+        Obligation saved = obligationRepository.saveAndFlush(entity);
         return new ObligationCreateResponse(obligationMapper.toResponse(saved), warning);
     }
 
@@ -69,8 +67,7 @@ public class ObligationService {
         LocalDate today = LocalDate.now();
         LocalDate endWindow = today.plusDays(days);
 
-        List<Obligation> obligations = obligationRepository.findByNextPaymentDateBetweenOrderByNextPaymentDateAsc(today,
-                endWindow);
+        List<Obligation> obligations = obligationRepository.findActiveUpcoming(today, endWindow);
 
         Map<String, BigDecimal> totals = obligations.stream()
                 .collect(Collectors.groupingBy(Obligation::getCurrency,
