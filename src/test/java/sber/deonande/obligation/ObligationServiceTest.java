@@ -36,7 +36,6 @@ class ObligationServiceTest {
     @InjectMocks
     private ObligationService obligationService;
 
-    // Lazy expiry
     @Test
     void testLazyExpiryRecurrenceNull() {
         UUID id = UUID.randomUUID();
@@ -54,7 +53,6 @@ class ObligationServiceTest {
         verify(obligationRepository).save(obligation);
     }
 
-    // Lazy expiry с учётом исключения для рекуррентных обязательств
     @Test
     void testLazyExpiryRecurrenceNotNull() {
         UUID id = UUID.randomUUID();
@@ -73,7 +71,6 @@ class ObligationServiceTest {
         assertEquals(LocalDate.now().minusDays(1).plusMonths(1), obligation.getNextPaymentDate());
     }
 
-    // /pay для каждого значения recurrence (включая null)
     @Test
     void testPayRecurrenceNull() {
         UUID id = UUID.randomUUID();
@@ -139,7 +136,6 @@ class ObligationServiceTest {
         assertEquals(LocalDate.of(2025, 1, 15), obY.getNextPaymentDate());
     }
 
-    // Граничный случай: оплата 31-го числа с recurrence = monthly
     @Test
     void testPayBoundaryCaseWithDates() {
         UUID id = UUID.randomUUID();
@@ -158,7 +154,6 @@ class ObligationServiceTest {
         assertEquals(LocalDate.of(2024, 2, 29), obligation.getNextPaymentDate());
     }
 
-    // Попытка оплатить или отменить не-active обязательство
     @Test
     void testPayNonActive() {
         UUID id = UUID.randomUUID();
@@ -185,7 +180,6 @@ class ObligationServiceTest {
         assertTrue(exception.getMessage().contains("active"));
     }
 
-    // Создание дубля и наличие warning в ответе
     @Test
     void testCreateDuplicateWarning() {
         ObligationCreateRequest request = new ObligationCreateRequest();

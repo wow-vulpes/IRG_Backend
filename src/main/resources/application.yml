@@ -23,3 +23,9 @@ spring:
     password: ${spring.datasource.password}
   jackson:
     property-naming-strategy: SNAKE_CASE
+
+springdoc:
+  swagger-ui:
+    path: /docs
+  api-docs:
+    path: /api-docs
