@@ -201,4 +201,36 @@ class ObligationServiceTest {
         assertNotNull(response.getWarning());
         assertEquals("Активное обязательство с таким названием уже существует", response.getWarning());
     }
+
+    @Test
+    void testCreateRecurrenceNullAndDatePast() {
+        ObligationCreateRequest request = new ObligationCreateRequest();
+        request.setRecurrence(null);
+        request.setNextPaymentDate(LocalDate.now().minusDays(5));
+
+        Obligation entity = new Obligation();
+        when(obligationMapper.toEntity(request)).thenReturn(entity);
+        when(obligationRepository.saveAndFlush(any())).thenReturn(entity);
+        when(obligationMapper.toResponse(any())).thenReturn(new ObligationResponse());
+
+        obligationService.create(request);
+
+        assertEquals(Status.EXPIRED, entity.getStatus());
+    }
+
+    @Test
+    void testCreateRecurrenceNotNullAndDatePast() {
+        ObligationCreateRequest request = new ObligationCreateRequest();
+        request.setRecurrence(Recurrence.MONTHLY);
+        request.setNextPaymentDate(LocalDate.now().minusDays(5));
+
+        Obligation entity = new Obligation();
+        when(obligationMapper.toEntity(request)).thenReturn(entity);
+        when(obligationRepository.saveAndFlush(any())).thenReturn(entity);
+        when(obligationMapper.toResponse(any())).thenReturn(new ObligationResponse());
+
+        obligationService.create(request);
+
+        assertEquals(Status.ACTIVE, entity.getStatus());
+    }
 }

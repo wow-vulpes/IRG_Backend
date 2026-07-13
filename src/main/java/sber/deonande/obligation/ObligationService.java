@@ -32,7 +32,7 @@ public class ObligationService {
     public ObligationCreateResponse create(ObligationCreateRequest request) {
         Obligation entity = obligationMapper.toEntity(request);
 
-        if (request.getNextPaymentDate() != null && request.getNextPaymentDate().isBefore(LocalDate.now())) {
+        if (request.getRecurrence() == null && request.getNextPaymentDate() != null && request.getNextPaymentDate().isBefore(LocalDate.now())) {
             entity.setStatus(Status.EXPIRED);
         } else {
             entity.setStatus(Status.ACTIVE);
